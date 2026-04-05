@@ -16,12 +16,12 @@ export default function Sidebar() {
       if (!user) return
       const { data } = await supabase
         .from('gyms')
-        .select('logo_url, name')
+        .select('logo_url, ad')
         .eq('user_id', user.id)
         .single()
       if (data) {
         setLogoUrl(data.logo_url || null)
-        setGymName(data.name || null)
+        setGymName(data.ad || null)
       }
     }
     gymGetir()

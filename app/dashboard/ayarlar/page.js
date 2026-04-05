@@ -26,7 +26,7 @@ export default function AyarlarPage() {
       .single()
     if (data) {
       setGym(data)
-      setIsim(data.name || '')
+      setIsim(data.ad || '')
       setPreviewUrl(data.logo_url || null)
     }
   }
