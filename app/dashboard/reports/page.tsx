@@ -136,14 +136,14 @@ export default function Reports() {
                         t.tur === 'yukleme' ? 'bg-[#c8f542]/10 text-[#c8f542]' :
                         t.tur === 'iptal' ? 'bg-orange-500/10 text-orange-400' :
                         'bg-blue-500/10 text-blue-400'
-                      }`}>{t.tur}</span>
+                      }`}>{t.tur === 'yukleme' ? 'Yükleme' : t.tur === 'satis' ? 'Satış' : t.tur === 'iptal' ? 'İptal' : t.tur}</span>
                     </td>
                     <td className="p-4 font-mono text-sm">
                       <span className={neg ? 'text-red-400' : 'text-[#c8f542]'}>
                         {neg ? '-' : '+'}₺{t.tutar}
                       </span>
                     </td>
-                    <td className="p-4 text-sm text-[#666]">{t.tarih}</td>
+                    <td className="p-4 text-sm text-[#666]">{new Date(t.tarih).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
                     <td className="p-4 text-sm text-[#666]">{t.aciklama || '—'}</td>
                     <td className="p-4">
                       {t.tur === 'satis' ? (
