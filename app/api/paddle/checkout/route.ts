@@ -18,5 +18,6 @@ export async function POST(req: NextRequest) {
   })
 
   const data = await response.json()
-  return NextResponse.json({ checkoutUrl: data.data?.checkout?.url })
+  console.log('Paddle response:', JSON.stringify(data))
+  return NextResponse.json({ checkoutUrl: data.data?.checkout?.url, debug: data })
 }
