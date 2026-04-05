@@ -148,6 +148,8 @@ export default function Members() {
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">
+                      <button onClick={() => router.push(`/dashboard/sales?member=${m.id}`)} className="text-xs bg-[#c8f542]/10 border border-[#c8f542]/30 text-[#c8f542] px-3 py-1 rounded-lg hover:bg-[#c8f542]/20 transition-all">⚡ Satış</button>
+                      <button onClick={() => router.push(`/dashboard/sales?member=${m.id}`)} className="text-xs bg-[#c8f542]/10 border border-[#c8f542]/30 text-[#c8f542] px-3 py-1 rounded-lg hover:bg-[#c8f542]/20 transition-all">⚡ Satış</button>
                       <button onClick={() => openBalance(m.id)} className="text-xs border border-[#2a2a2a] px-3 py-1 rounded-lg hover:border-[#c8f542] hover:text-[#c8f542] transition-all">+ Bakiye</button>
                       <button onClick={() => openEdit(m)} className="text-xs border border-[#2a2a2a] px-3 py-1 rounded-lg hover:border-[#c8f542] hover:text-[#c8f542] transition-all">✏️</button>
                       <button onClick={() => deleteMember(m.id)} className="text-xs border border-red-500/30 text-red-400 px-3 py-1 rounded-lg hover:bg-red-500/10 transition-all">🗑</button>

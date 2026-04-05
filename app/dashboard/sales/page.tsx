@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Sales() {
   const [members, setMembers] = useState<any[]>([])
@@ -12,10 +12,13 @@ export default function Sales() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     checkAuth()
     loadData()
+    const memberId = searchParams.get('member')
+    if (memberId) setSelectedMember(parseInt(memberId))
   }, [])
 
   async function checkAuth() {
