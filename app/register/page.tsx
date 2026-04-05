@@ -19,16 +19,20 @@ export default function Register() {
     if (password.length < 6) { setError('Şifre en az 6 karakter olmalı!'); return }
     setLoading(true)
 
-    const { data, error: authError } = await supabase.auth.signUp({ email, password })
+    const { error: authError } = await supabase.auth.signUp({ email, password })
     if (authError) { setError(authError.message); setLoading(false); return }
 
-    if (data.user) {
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+    if (loginError) { setError(loginError.message); setLoading(false); return }
+
+    const userId = loginData.user?.id
+    if (userId) {
       const slug = businessName.toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '')
         + '-' + Math.random().toString(36).slice(2, 6)
       await supabase.from('gyms').insert({
-        user_id: data.user.id,
+        user_id: userId,
         ad: businessName,
         email: email,
         plan: 'free',
