@@ -138,11 +138,11 @@ export default function Dashboard() {
                       t.tur === 'yukleme' ? 'bg-[#c8f542]/10 text-[#c8f542]' :
                       'bg-orange-500/10 text-orange-400'
                     }`}>
-                      {t.tur}
+                      {t.tur === 'yukleme' ? 'Yükleme' : t.tur === 'satis' ? 'Satış' : t.tur === 'iptal' ? 'İptal' : t.tur}
                     </span>
                   </td>
                   <td className="p-4 text-sm font-mono">₺{t.tutar}</td>
-                  <td className="p-4 text-sm text-[#666]">{t.tarih}</td>
+                  <td className="p-4 text-sm text-[#666]">{new Date(t.tarih).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
                 </tr>
               ))}
             </tbody>
