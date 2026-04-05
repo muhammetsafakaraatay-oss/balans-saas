@@ -11,11 +11,14 @@ export default function Dashboard() {
   const [gym, setGym] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [upgrading, setUpgrading] = useState(false)
+  const [now, setNow] = useState(new Date())
   const [products, setProducts] = useState<any[]>([])
   const router = useRouter()
 
   useEffect(() => {
     checkAuth()
+    const timer = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(timer)
   }, [])
 
   async function checkAuth() {
@@ -66,10 +69,32 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white flex">
       <main className="flex-1 p-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-[#c8f542] tracking-wide">PANEL</h2>
-          <p className="text-[#666] text-sm mt-1">Genel bakış</p>
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h2 className="text-3xl font-bold text-[#c8f542] tracking-wide">PANEL</h2>
+            <p className="text-[#666] text-sm mt-1">Genel bakış</p>
+          </div>
+          <div className="text-right bg-[#161616] border border-[#2a2a2a] rounded-xl px-5 py-3">
+            <div className="text-2xl font-mono font-bold text-[#c8f542] tracking-widest">
+              {now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </div>
+            <div className="text-[#666] text-xs mt-1">
+              {now.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+            <div className="text-white text-xs mt-2 border-t border-[#2a2a2a] pt-2">
+              {(() => {
+                const bugun = now.toISOString().slice(0, 10)
+                const bugunIslemler = transactions.filter(t => t.tarih === bugun)
+                const bugunSatis = bugunIslemler.filter(t => t.tur === 'satis').reduce((s, t) => s + Number(t.tutar), 0)
+                const bugunAdet = bugunIslemler.filter(t => t.tur === 'satis').length
+                return bugunAdet > 0
+                  ? <span>Bugün <span className="text-[#c8f542] font-bold">{bugunAdet} satış</span> · <span className="text-[#c8f542] font-bold">₺{bugunSatis.toFixed(0)}</span></span>
+                  : <span className="text-[#666]">Bugün henüz satış yok</span>
+              })()}
+            </div>
+          </div>
         </div>
+
 
         {members.length === 0 && products.length === 0 && (
           <div className="bg-[#161616] border border-[#c8f542]/30 rounded-xl p-6 mb-6">
