@@ -11,6 +11,7 @@ export default function UyePanel({ params }: { params: { slug: string } }) {
   const [gym, setGym] = useState<any>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [animatedBalance, setAnimatedBalance] = useState(0)
 
   useEffect(() => {
     loadGym()
@@ -46,6 +47,20 @@ export default function UyePanel({ params }: { params: { slug: string } }) {
     setTransactions(txs || [])
     setStep('panel')
     setLoading(false)
+    const target = Number(data.bakiye)
+    const duration = 1000
+    const steps = 40
+    const increment = target / steps
+    let current = 0
+    const timer = setInterval(() => {
+      current += increment
+      if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
+        setAnimatedBalance(target)
+        clearInterval(timer)
+      } else {
+        setAnimatedBalance(Math.round(current))
+      }
+    }, duration / steps)
   }
 
   if (!gym) return (
@@ -93,7 +108,7 @@ export default function UyePanel({ params }: { params: { slug: string } }) {
             <p className="text-[#666] text-sm mb-1">Merhaba, {member.ad_soyad.split(' ')[0]}! 👋</p>
             <p className="text-xs text-[#666] uppercase tracking-widest mb-4">Mevcut Bakiye</p>
             <div className={`text-5xl font-bold mb-2 ${Number(member.bakiye) >= 0 ? 'text-[#c8f542]' : 'text-red-400'}`}>
-              {Number(member.bakiye) >= 0 ? '+' : ''}{Number(member.bakiye).toFixed(0)}₺
+              {animatedBalance >= 0 ? '+' : ''}{animatedBalance}₺
             </div>
             <p className={`text-sm ${Number(member.bakiye) < 0 ? 'text-red-400' : 'text-[#666]'}`}>
               {Number(member.bakiye) < 0 ? '⚠️ Bakiyeniz ekside' : '✅ Aktif üye'}
