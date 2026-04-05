@@ -11,6 +11,7 @@ export default function Dashboard() {
   const [gym, setGym] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [upgrading, setUpgrading] = useState(false)
+  const [products, setProducts] = useState<any[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -31,6 +32,8 @@ export default function Dashboard() {
       .order('id', { ascending: false })
       .limit(10)
     const { data: g } = await supabase.from('gyms').select('*').eq('user_id', userId).single()
+    const { data: p } = await supabase.from('urunler').select('*')
+    setProducts(p || [])
     setMembers(m || [])
     setTransactions(t || [])
     setGym(g)
@@ -68,6 +71,29 @@ export default function Dashboard() {
           <p className="text-[#666] text-sm mt-1">Genel bakış</p>
         </div>
 
+        {members.length === 0 && products.length === 0 && (
+          <div className="bg-[#161616] border border-[#c8f542]/30 rounded-xl p-6 mb-6">
+            <h3 className="text-[#c8f542] font-bold mb-1">Hoş geldiniz! 👋</h3>
+            <p className="text-[#666] text-sm mb-4">Başlamak için 3 adımı tamamlayın</p>
+            <div className="flex gap-4">
+              <div onClick={() => router.push('/dashboard/products')} className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-4 cursor-pointer hover:border-[#c8f542] transition-all">
+                <div className="text-2xl mb-2">🥤</div>
+                <div className="text-sm font-bold mb-1">Ürün Ekle</div>
+                <div className="text-xs text-[#666]">Satacağınız ürünleri tanımlayın</div>
+              </div>
+              <div onClick={() => router.push('/dashboard/members')} className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-4 cursor-pointer hover:border-[#c8f542] transition-all">
+                <div className="text-2xl mb-2">👥</div>
+                <div className="text-sm font-bold mb-1">Üye Ekle</div>
+                <div className="text-xs text-[#666]">İlk üyenizi kaydedin</div>
+              </div>
+              <div onClick={() => router.push('/dashboard/sales')} className="flex-1 bg-[#1e1e1e] border border-[#2a2a2a] rounded-xl p-4 cursor-pointer hover:border-[#c8f542] transition-all">
+                <div className="text-2xl mb-2">🛒</div>
+                <div className="text-sm font-bold mb-1">Satış Yap</div>
+                <div className="text-xs text-[#666]">İlk satışınızı gerçekleştirin</div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
             <div className="text-[#666] text-xs uppercase tracking-widest mb-2">Toplam Üye</div>
