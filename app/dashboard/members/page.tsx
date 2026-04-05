@@ -134,7 +134,7 @@ export default function Members() {
             <tbody>
               {filtered.map(m => (
                 <tr key={m.id} className="border-t border-[#2a2a2a] hover:bg-[#1e1e1e]">
-                  <td className="p-4 font-medium">{m.ad_soyad}</td>
+                  <td className="p-4 font-medium"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-black flex-shrink-0" style={{backgroundColor: `hsl(${m.ad_soyad.charCodeAt(0) * 137 % 360}, 70%, 60%)`}}>{m.ad_soyad.charAt(0).toUpperCase()}</div><span>{m.ad_soyad}</span></div></td>
                   <td className="p-4 text-[#666] text-sm">{m.telefon || '—'}</td>
                   <td className="p-4 font-mono text-sm font-bold">
                     <span className={Number(m.bakiye) >= 0 ? 'text-[#c8f542]' : 'text-red-400'}>
