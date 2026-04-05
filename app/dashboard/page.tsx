@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<any[]>([])
   const [gym, setGym] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [upgrading, setUpgrading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -34,6 +35,20 @@ export default function Dashboard() {
     setTransactions(t || [])
     setGym(g)
     setLoading(false)
+  }
+
+  async function handleUpgrade() {
+    setUpgrading(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    const res = await fetch('/api/paddle/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: session.user.email, userId: session.user.id })
+    })
+    const { checkoutUrl } = await res.json()
+    if (checkoutUrl) window.location.href = checkoutUrl
+    else { alert('Ödeme sayfası açılamadı.'); setUpgrading(false) }
   }
 
   if (loading) return (
@@ -72,6 +87,21 @@ export default function Dashboard() {
             <div className="text-3xl font-bold text-white">{transactions.length}</div>
           </div>
         </div>
+
+        {gym?.plan === 'free' && (
+          <div className="bg-[#161616] border border-orange-500/30 rounded-xl p-5 mb-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm font-medium mb-1 text-orange-400">Ücretsiz Plan</p>
+              <p className="text-[#666] text-xs">₺500/ay ile tüm özelliklere erişin.</p>
+            </div>
+            <button
+              onClick={handleUpgrade}
+              disabled={upgrading}
+              className="bg-[#c8f542] text-black font-bold px-4 py-2 rounded-lg text-sm hover:bg-[#d6ff55] transition-all disabled:opacity-50">
+              {upgrading ? 'Yönlendiriliyor...' : 'Planı Yükselt'}
+            </button>
+          </div>
+        )}
 
         {gym?.slug && (
           <div className="bg-[#161616] border border-[#c8f542]/30 rounded-xl p-5 mb-6 flex justify-between items-center">
