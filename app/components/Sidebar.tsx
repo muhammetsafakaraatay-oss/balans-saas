@@ -56,7 +56,7 @@ export default function Sidebar() {
             {gymName || 'BALANS'}
           </div>
         )}
-        <div className="text-[#666] text-xs mt-1">Yönetim Paneli</div>
+        <div className="text-[#666] text-xs mt-1">{gymName || "Yönetim Paneli"}</div>
       </div>
 
       {/* Nav */}
