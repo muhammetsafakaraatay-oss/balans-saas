@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Dashboard() {
   const [members, setMembers] = useState<any[]>([])
@@ -115,6 +116,27 @@ export default function Dashboard() {
           </div>
         )}
 
+                <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5 mb-6">
+          <h3 className="font-semibold mb-4">Bu Ay Günlük Satışlar</h3>
+          <ResponsiveContainer width="100%" height={180}>
+            <AreaChart data={(() => {
+              const days: Record<string, number> = {}
+              transactions.filter(t => t.tur === 'satis').forEach(t => {
+                const gun = t.tarih?.slice(0, 10) || ''
+                days[gun] = (days[gun] || 0) + Number(t.tutar)
+              })
+              return Object.entries(days).sort().map(([tarih, tutar]) => ({
+                tarih: new Date(tarih).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }),
+                tutar
+              }))
+            })()}>
+              <XAxis dataKey="tarih" tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#666', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ backgroundColor: '#1e1e1e', border: '1px solid #2a2a2a', borderRadius: '8px', color: '#fff' }} />
+              <Area type="monotone" dataKey="tutar" stroke="#c8f542" fill="#c8f542" fillOpacity={0.1} strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
           <div className="p-5 border-b border-[#2a2a2a]">
             <h3 className="font-semibold">Son İşlemler</h3>
