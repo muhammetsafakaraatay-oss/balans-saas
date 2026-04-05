@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import Sidebar from '../../components/Sidebar'
 
 export default function Reports() {
   const [transactions, setTransactions] = useState<any[]>([])
@@ -76,7 +75,6 @@ export default function Reports() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white flex">
-      <Sidebar />
       <main className="flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <div>

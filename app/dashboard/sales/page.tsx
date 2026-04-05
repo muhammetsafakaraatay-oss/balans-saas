@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import Sidebar from '../../components/Sidebar'
 
 export default function Sales() {
   const [members, setMembers] = useState<any[]>([])
@@ -72,7 +71,6 @@ export default function Sales() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white flex">
-      <Sidebar />
       <main className="flex-1 p-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-[#c8f542] tracking-wide">SATIŞ YAP</h2>
