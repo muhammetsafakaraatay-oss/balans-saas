@@ -38,7 +38,7 @@ export default function AyarlarPage() {
     const { data: { user } } = await supabase.auth.getUser()
     const { error } = await supabase
       .from('gyms')
-      .update({ name: isim })
+      .update({ ad: isim })
       .eq('user_id', user.id)
     if (error) {
       setMesaj({ tip: 'hata', metin: 'Güncelleme başarısız.' })
