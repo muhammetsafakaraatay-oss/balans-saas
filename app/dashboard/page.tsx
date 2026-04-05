@@ -8,24 +8,31 @@ import Sidebar from '../components/Sidebar'
 export default function Dashboard() {
   const [members, setMembers] = useState<any[]>([])
   const [transactions, setTransactions] = useState<any[]>([])
+  const [gym, setGym] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     checkAuth()
-    loadData()
   }, [])
 
   async function checkAuth() {
     const { data: { session } } = await supabase.auth.getSession()
-    if (!session) router.push('/')
+    if (!session) { router.push('/'); return }
+    loadData(session.user.id)
   }
 
-  async function loadData() {
+  async function loadData(userId: string) {
     const { data: m } = await supabase.from('uyeler').select('*')
-    const { data: t } = await supabase.from('islemler').select('*').order('id', { ascending: false }).limit(10)
+    const { data: t } = await supabase
+      .from('islemler')
+      .select('*, uyeler(ad_soyad)')
+      .order('id', { ascending: false })
+      .limit(10)
+    const { data: g } = await supabase.from('gyms').select('*').eq('user_id', userId).single()
     setMembers(m || [])
     setTransactions(t || [])
+    setGym(g)
     setLoading(false)
   }
 
@@ -47,7 +54,7 @@ export default function Dashboard() {
           <p className="text-[#666] text-sm mt-1">Genel bakış</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl p-5">
             <div className="text-[#666] text-xs uppercase tracking-widest mb-2">Toplam Üye</div>
             <div className="text-3xl font-bold text-white">{members.length}</div>
@@ -66,6 +73,20 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {gym?.slug && (
+          <div className="bg-[#161616] border border-[#c8f542]/30 rounded-xl p-5 mb-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm font-medium mb-1">Üye Paneli Linki</p>
+              <p className="text-[#666] text-xs font-mono">balans-eta.vercel.app/uye/{gym.slug}</p>
+            </div>
+            <button
+              onClick={() => navigator.clipboard.writeText(`https://balans-eta.vercel.app/uye/${gym.slug}`)}
+              className="bg-[#c8f542] text-black font-bold px-4 py-2 rounded-lg text-sm hover:bg-[#d6ff55] transition-all">
+              Kopyala
+            </button>
+          </div>
+        )}
+
         <div className="bg-[#161616] border border-[#2a2a2a] rounded-xl overflow-hidden">
           <div className="p-5 border-b border-[#2a2a2a]">
             <h3 className="font-semibold">Son İşlemler</h3>
@@ -82,9 +103,13 @@ export default function Dashboard() {
             <tbody>
               {transactions.map((t: any) => (
                 <tr key={t.id} className="border-t border-[#2a2a2a] hover:bg-[#1e1e1e]">
-                  <td className="p-4 text-sm">{t.uye_id}</td>
+                  <td className="p-4 text-sm">{t.uyeler?.ad_soyad || '—'}</td>
                   <td className="p-4">
-                    <span className={`text-xs px-2 py-1 rounded-full ${t.tur === 'satis' ? 'bg-red-500/10 text-red-400' : t.tur === 'yukleme' ? 'bg-[#c8f542]/10 text-[#c8f542]' : 'bg-orange-500/10 text-orange-400'}`}>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      t.tur === 'satis' ? 'bg-red-500/10 text-red-400' :
+                      t.tur === 'yukleme' ? 'bg-[#c8f542]/10 text-[#c8f542]' :
+                      'bg-orange-500/10 text-orange-400'
+                    }`}>
                       {t.tur}
                     </span>
                   </td>
