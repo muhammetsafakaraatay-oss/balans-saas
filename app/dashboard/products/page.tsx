@@ -13,6 +13,7 @@ export default function Products() {
   const [price, setPrice] = useState('')
   const [emoji, setEmoji] = useState('')
   const [category, setCategory] = useState('İçecek')
+  const [stok, setStok] = useState('')
   const router = useRouter()
 
   useEffect(() => {
@@ -33,14 +34,14 @@ export default function Products() {
 
   async function saveProduct() {
     if (!name.trim() || !price) return alert('Ad ve fiyat zorunlu!')
-    const data = { ad: name, fiyat: parseFloat(price), emoji: emoji || '🛒', kategori: category }
+    const data = { ad: name, fiyat: parseFloat(price), emoji: emoji || '🛒', kategori: category, stok: stok !== '' ? parseInt(stok) : null }
     if (editingId) {
       await supabase.from('urunler').update(data).eq('id', editingId)
     } else {
       const user = await supabase.auth.getUser(); await supabase.from('urunler').insert({...data, gym_id: user.data.user?.id})
     }
     setShowModal(false)
-    setName(''); setPrice(''); setEmoji(''); setCategory('İçecek'); setEditingId(null)
+    setName(''); setPrice(''); setEmoji(''); setCategory('İçecek'); setStok(''); setEditingId(null)
     loadProducts()
   }
 
@@ -51,7 +52,7 @@ export default function Products() {
   }
 
   function openEdit(p: any) {
-    setEditingId(p.id); setName(p.ad); setPrice(p.fiyat); setEmoji(p.emoji || ''); setCategory(p.kategori || 'İçecek'); setShowModal(true)
+    setEditingId(p.id); setName(p.ad); setPrice(p.fiyat); setEmoji(p.emoji || ''); setCategory(p.kategori || 'İçecek'); setStok(p.stok ?? ''); setShowModal(true)
   }
 
   if (loading) return (
@@ -84,6 +85,7 @@ export default function Products() {
                 <th className="text-left p-4">Ürün Adı</th>
                 <th className="text-left p-4">Fiyat</th>
                 <th className="text-left p-4">Kategori</th>
+                <th className="text-left p-4">Stok</th>
                 <th className="text-left p-4">İşlem</th>
               </tr>
             </thead>
@@ -95,6 +97,9 @@ export default function Products() {
                   <td className="p-4 font-mono text-[#c8f542]">₺{p.fiyat}</td>
                   <td className="p-4">
                     <span className="text-xs bg-[#c8f542]/10 text-[#c8f542] px-2 py-1 rounded-full">{p.kategori || '—'}</span>
+                  </td>
+                  <td className="p-4">
+                    {p.stok === null || p.stok === undefined ? <span className="text-[#666] text-xs">—</span> : p.stok === 0 ? <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full">⚠️ Tükendi</span> : p.stok <= 5 ? <span className="text-xs bg-orange-500/10 text-orange-400 px-2 py-1 rounded-full">⚡ {p.stok} kaldı</span> : <span className="text-xs bg-[#c8f542]/10 text-[#c8f542] px-2 py-1 rounded-full">{p.stok} adet</span>}
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">
@@ -119,6 +124,7 @@ export default function Products() {
               className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-4 py-3 text-white mb-3 outline-none focus:border-[#c8f542] text-sm" />
             <input placeholder="Fiyat (₺) *" value={price} onChange={e => setPrice(e.target.value)}
               className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-4 py-3 text-white mb-3 outline-none focus:border-[#c8f542] text-sm" />
+            <input placeholder="Stok Adedi (boş bırakılabilir)" value={stok} onChange={e => setStok(e.target.value)} type="number" className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-4 py-3 text-white mb-3 outline-none focus:border-[#c8f542] text-sm" />
             <select value={category} onChange={e => setCategory(e.target.value)}
               className="w-full bg-[#1e1e1e] border border-[#2a2a2a] rounded-lg px-4 py-3 text-white mb-6 outline-none focus:border-[#c8f542] text-sm">
               <option>İçecek</option>
