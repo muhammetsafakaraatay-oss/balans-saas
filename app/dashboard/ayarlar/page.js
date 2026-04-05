@@ -63,7 +63,7 @@ export default function AyarlarPage() {
     const { data: { user } } = await supabase.auth.getUser()
     const dosyaYolu = `${user.id}/logo.${dosya.name.split('.').pop()}`
     const { error: uploadError } = await supabase.storage
-      .from('logos')
+      .from('Logos')
       .upload(dosyaYolu, dosya, { upsert: true })
     if (uploadError) {
       setMesaj({ tip: 'hata', metin: 'Logo yüklenemedi.' })
@@ -71,7 +71,7 @@ export default function AyarlarPage() {
       return
     }
     const { data: urlData } = supabase.storage
-      .from('logos')
+      .from('Logos')
       .getPublicUrl(dosyaYolu)
     const { error: updateError } = await supabase
       .from('gyms')
