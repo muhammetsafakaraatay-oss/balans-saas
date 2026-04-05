@@ -1,11 +1,31 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function Sidebar() {
   const router = useRouter()
   const pathname = usePathname()
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [gymName, setGymName] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function gymGetir() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('gyms')
+        .select('logo_url, name')
+        .eq('user_id', user.id)
+        .single()
+      if (data) {
+        setLogoUrl(data.logo_url || null)
+        setGymName(data.name || null)
+      }
+    }
+    gymGetir()
+  }, [])
 
   async function doLogout() {
     await supabase.auth.signOut()
@@ -13,19 +33,33 @@ export default function Sidebar() {
   }
 
   const items = [
-    { label: 'Panel', icon: '📊', href: '/dashboard' },
-    { label: 'Üyeler', icon: '👥', href: '/dashboard/members' },
+    { label: 'Panel',    icon: '📊', href: '/dashboard' },
+    { label: 'Üyeler',  icon: '👥', href: '/dashboard/members' },
     { label: 'Satış Yap', icon: '🛒', href: '/dashboard/sales' },
     { label: 'Ürünler', icon: '🥤', href: '/dashboard/products' },
     { label: 'Raporlar', icon: '📈', href: '/dashboard/reports' },
+    { label: 'Ayarlar', icon: '⚙️', href: '/dashboard/ayarlar' },
   ]
 
   return (
     <aside className="w-56 min-h-screen bg-[#161616] border-r border-[#2a2a2a] flex flex-col">
+      {/* Logo / İşletme Adı */}
       <div className="px-6 py-6 border-b border-[#2a2a2a]">
-        <div className="text-[#c8f542] font-bold text-2xl tracking-widest">BALANS</div>
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt="Logo"
+            className="h-10 w-auto object-contain"
+          />
+        ) : (
+          <div className="text-[#c8f542] font-bold text-2xl tracking-widest">
+            {gymName || 'BALANS'}
+          </div>
+        )}
         <div className="text-[#666] text-xs mt-1">Yönetim Paneli</div>
       </div>
+
+      {/* Nav */}
       <nav className="flex-1 py-4">
         {items.map(item => (
           <div
@@ -42,6 +76,8 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Çıkış */}
       <div className="px-6 py-4 border-t border-[#2a2a2a]">
         <button
           onClick={doLogout}
