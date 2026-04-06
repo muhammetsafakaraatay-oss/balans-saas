@@ -18,7 +18,7 @@ export default function Sales() {
     checkAuth()
     loadData()
     const memberId = searchParams.get('member')
-    if (memberId) setSelectedMember(parseInt(memberId))
+    if (memberId) setSelectedMember(memberId)
   }, [])
 
   async function checkAuth() {
