@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function Sales() {
+function SalesContent() {
   const [members, setMembers] = useState<any[]>([])
   const [products, setProducts] = useState<any[]>([])
   const [cart, setCart] = useState<any[]>([])
@@ -166,5 +167,12 @@ export default function Sales() {
         </div>
       </main>
     </div>
+  )
+}
+export default function Sales() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center"><div className="text-[#c8f542]">Yükleniyor...</div></div>}>
+      <SalesContent />
+    </Suspense>
   )
 }
